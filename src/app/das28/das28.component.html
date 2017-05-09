@@ -1,0 +1,68 @@
+<div class="container">
+  <div class="row">
+    <div class="col-4" style="text-align: center">Desno</div>
+    <div class="col-4"></div>
+    <div class="col-4" style="text-align: center">Levo</div>
+  </div>
+  <div class="row">
+    <div class="col-4">
+      <div class="row">
+        <div class="col-6" style="text-align: center">Bolec</div>
+        <div class="col-6" style="text-align: center">Otecen</div>
+      </div>
+    </div>
+    <div class="col-4"></div>
+    <div class="col-4">
+      <div class="row">
+        <div class="col-6" style="text-align: center">Bolec</div>
+        <div class="col-6" style="text-align: center">Otecen</div>
+      </div>
+    </div>
+  </div>
+  <div class="row" *ngFor="let location of jointLocation;let i=index;">
+    <div class="col-4">
+      <div class="row">
+        <div class="col-6" style="text-align: center"><input type="checkbox" #i1 (click)="func(i,'right','bolec')">
+        </div>
+        <div class="col-6" style="text-align: center"><input type="checkbox" #c2 (click)="func(i,'right','otecen')">
+        </div>
+      </div>
+    </div>
+    <div class="col-4" style="text-align: center">{{location}}</div>
+    <div class="col-4">
+      <div class="row">
+        <div class="col-6" style="text-align: center"><input type="checkbox" (click)="func(i,'left','bolec')"></div>
+        <div class="col-6" style="text-align: center"><input type="checkbox" (click)="func(i,'left','otecen')"></div>
+      </div>
+    </div>
+  </div>
+  <div *ngIf="bolecCount!=0 || otecenCount!=0">
+    <h3 class="m-2">Bolec: {{bolecCount}} Otecen: {{otecenCount}}</h3>
+    <div [hidden]="crp!=null" style="display: inline" class="col-md-4">
+      <label for="esr" style="display: block;">SR</label>
+      <input style="display: inline" type="number" class="form-control col-md-2" id="esr" [(ngModel)]="esr">mm/h
+    </div>
+    <div [hidden]="esr!=null" style="display: inline" class="col-md-4">
+      <label for="crp" style="display: block;">CRP</label>
+      <input style="display: inline" type="number" class="form-control col-md-2" id="crp" [(ngModel)]="crp">mm/L
+    </div>
+    <p>Bolnikova ocena</p>
+    <p>Kako bi ocenili aktivnost artritisa in kako je danes vplival na vas?</p>
+    <div class="btn-group">
+      <button type="button" role="group" aria-label="..." class="btn btn-secondary"
+              [ngClass]="{'selectPga':pga==i}"
+              *ngFor="let i of [1,2,3,4,5,6,7,8,9,10]" (click)="setPga(i)">{{i}}
+      </button>
+    </div>
+    <div style="margin: 10px;">
+      <button class="btn btn-primary"
+              [disabled]="!((crp!=null || esr!=null) && pga!=null)"
+              (click)="calculateDas28()">Izračun
+      </button>
+    </div>
+    <div *ngIf="this.das28">
+      <h1>Ocena: {{this.das28 | number: '1.2-2'}}</h1>
+      <h3>Aktivnost pacienta: {{this.das28Status}}</h3>
+    </div>
+  </div>
+</div>
