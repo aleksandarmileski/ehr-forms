@@ -1,6 +1,6 @@
 import {
-  Component, OnInit, Input, EventEmitter, OnChanges, SimpleChanges, OnDestroy,
-  ChangeDetectorRef, ChangeDetectionStrategy
+    Component, OnInit, Input, EventEmitter, OnChanges, SimpleChanges, OnDestroy,
+    ChangeDetectorRef, ChangeDetectionStrategy
 } from '@angular/core';
 import {FormGroup} from '@angular/forms';
 import {ValidateOptions} from 'mrd-ui-components';
@@ -11,59 +11,62 @@ import {EhrFormCustomComponent} from 'thinkehr-forms';
 import {QuantityFieldModel} from 'thinkehr-forms';
 
 @Component({
-  selector: 'asc-dis',
-  templateUrl: './associated-diseases.component.html',
-  styleUrls: ['./associated-diseases.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+    selector: 'asc-dis',
+    templateUrl: './associated-diseases.component.html',
+    styleUrls: ['./associated-diseases.component.css'],
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AssociatedDiseasesComponent implements OnDestroy, EhrFormCustomComponent {
 
-  @Input()
-  set model(value: CustomModel) {
-    this.modelValue$ = null;
-    this.unsubscribeAll();
-    this.connectValues(value);
-    this._model = value;
+    @Input()
+    set model(value: CustomModel) {
+        this.modelValue$ = null;
+        this.unsubscribeAll();
+        this.connectValues(value);
+        this._model = value;
 
-  }
+    }
 
-  get model(): CustomModel {
-    return this._model;
-  }
+    get model(): CustomModel {
+        return this._model;
+    }
 
-  private _model: CustomModel;
+    private _model: CustomModel;
 
-  @Input()
-  ehrFormGroup: FormGroup;
+    @Input()
+    ehrFormGroup: FormGroup;
 
-  @Input()
-  validateFormEvent: EventEmitter<ValidateOptions>;
+    @Input()
+    validateFormEvent: EventEmitter<ValidateOptions>;
 
-  protected connectValues(customModel: CustomModel): void {
+    protected connectValues(customModel: CustomModel): void {
 
-  }
+    }
 
-  modelValue$: Observable<string>;
+    valuesArray = ["PULMONARY HYPERTENSION",
+        "DIABETES TYPE I", "DIABETES TYPE II", "CHRONIC KIDNEY DISEASE", "LIVER DISEASE", "ULCER DISEASE", "CHOLECYSTOLITHIASIS", "INFLAMMATORY BOWEL DISEASE", "DIVERTICULOSIS", "CHRONIC PANCREATITIS", "PERIPHERAL ARTERIAL OCCULUSIVE DISEASE", "ULCER DISEASE OF THE STOMACH/DUODENUM", "CEREBROVASCULAR DISEASE", "COPD", "BRONCHITIS",
+        "ASTHMA", "CONDITION AFTER TUBERCULOSIS", "MALIGNANCIES", "ENDOCRINOLOGICAL DISEASES", "PSYCHIATRIC DISORDERS", "OTHER DISEASES"];
 
-  protected modelSubscriptions: Subscription[] = [];
+    modelValue$: Observable<string>;
 
-  constructor(private changeDetectorRef: ChangeDetectorRef, private ehrModelObservable: EhrModelObservable) {
-  }
+    protected modelSubscriptions: Subscription[] = [];
 
-  ngOnDestroy() {
-    this.unsubscribeAll();
-  }
+    constructor(private changeDetectorRef: ChangeDetectorRef, private ehrModelObservable: EhrModelObservable) {
+    }
 
-  private unsubscribeAll() {
-    this.modelSubscriptions.forEach((subs: Subscription) => {
-      subs.unsubscribe();
-    });
-    this.modelSubscriptions = [];
-  }
+    ngOnDestroy() {
+        this.unsubscribeAll();
+    }
+
+    private unsubscribeAll() {
+        this.modelSubscriptions.forEach((subs: Subscription) => {
+            subs.unsubscribe();
+        });
+        this.modelSubscriptions = [];
+    }
 
 
+    styleBmi(value): void {
 
-  styleBmi(value): void {
-
-  }
+    }
 }
