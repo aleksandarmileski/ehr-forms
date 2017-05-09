@@ -1,0 +1,37 @@
+.wrapper-allergies{
+    height: 32px;
+    width: auto;
+    background-color: #f8f8f8;
+    text-align: left;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 12px;
+    padding: 5px 0 9px 10px;
+    border-top: 1px solid lightgray;
+    border-bottom: 1px solid lightgray;
+    margin-bottom : 10px;
+
+}
+
+.wrapper-left{
+    margin-left: 15px;
+}
+.btn-custom{
+    width: 73px;
+    height: 32px;
+    float: left;
+    margin-right: 7px;
+    text-align: center;
+    box-shadow: none;
+}
+.btn-unknown{
+    width: 90px;
+    height: 32px;
+    float: left;
+    margin-right: 7px;
+    text-align: center;
+    box-shadow: none;
+}
+.btn:hover {
+    background-color: #f0f0f0;
+}

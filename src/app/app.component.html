@@ -1,24 +1,28 @@
 <div style="margin: 5px; display: inline" *ngFor="let f of forms;let i=index;">
-  <button class="btn btn-primary btn-sm"
-          (click)="getForm(f['name'],f['version'])">{{f.name}} {{f.version}}
-  </button>
+    <button class="btn btn-primary btn-sm"
+            (click)="getForm(f['name'],f['version'])">{{f.name}} {{f.version}}
+    </button>
 </div>
 <button (click)="getRenderer()">x</button>
 <div class="container wrapper" style="margin-top: 30px; text-align: center">
-  <div class="btn-group">
-    <button class="btn btn-default" [class.btn-primary]="tab.tag == selectedTab.tag" *ngFor="let tab of tabs" (click)="setActiveTab(tab)">
-      {{tab.name}}
-    </button>
-  </div>
-  <ehr-form-description-renderer [formConfig]="formConfig"
-                                 #renderer>
-  </ehr-form-description-renderer>
-</div>
+    <div class="col-md-12">
+        <div class="btn-group">
+            <button class="btn btn-default" [class.btn-primary]="tab.tag == selectedTab.tag" *ngFor="let tab of tabs"
+                    (click)="setActiveTab(tab)">
+                {{tab.name}}
+            </button>
+        </div>
 
+
+    <ehr-form-description-renderer [formConfig]="formConfig"
+                                   #renderer>
+    </ehr-form-description-renderer>
+    </div>
+</div>
 <div *ngIf="formDescription">
 
-  <button (click)="postComposition()">Post</button>
-  <button (click)="putComposition()">Put</button>
+    <button (click)="postComposition()">Post</button>
+    <button (click)="putComposition()">Put</button>
 </div>
 
 

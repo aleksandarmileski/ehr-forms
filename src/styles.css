@@ -4,11 +4,58 @@
 ehr-form {
 @import "~thinkehr-forms/src/theme/all-gray.scss";
 }
+
 .no-border {
-  border: 0!important;
+    border: 0 !important;
 }
 
+@font-face {
+    font-family: Lato-Regular;
+    src: url("../src/assets/Lato-Regular.ttf")
+}
+
+body {
+    font-family: Lato-Regular, SansSerif;
+
+}
+.card-block {
+    padding: 0;
+}
+
+
 .wrapper {
-  border: 1px solid grey;
-  padding: 10px;
+
+    padding-top: 7px;
+}
+
+.btn-group {
+    width: 100%;
+    color: lightgray;
+    font-size: small;
+    box-shadow: 1px 1px 1px lightgray;
+    margin-bottom: 10px;
+    background-color: #f0f0f0;
+
+}
+
+.btn-default {
+    width: 20%;
+    background-color: white;
+    border: 1px solid lightgray;
+    font-size: small;
+    color: #61646d;
+    font-weight: 500;
+    padding: 6px 20px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px lightgray;
+}
+
+.btn-primary {
+    width: 20%;
+    color: #61646d;
+    font-size: small;
+    font-weight: 500;
+    padding: 6px 20px;
+    cursor: pointer;
+    box-shadow: 1px 1px 1px lightgray;
 }
