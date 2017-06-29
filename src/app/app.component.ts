@@ -107,7 +107,6 @@ export class AppComponent implements OnInit {
                 // }
                 this.formConfig = {description: desc, layout: layout}
                 setTimeout(() => {
-                  this.initialize();
                 }, 200)
 
                 // console.log(this.formConfig)
@@ -174,7 +173,7 @@ export class AppComponent implements OnInit {
       "ctx/time": "2014-3-19T13:10Z",
       "ctx/language": "en",
       "ctx/territory": "CA",
-      "allergies": this.values.allergies
+      [Object.keys(this.formConfig.values)[0]]: this.formConfig.values
     })
       .subscribe(console.log);
     // console.log(JSON.stringify({
@@ -183,16 +182,22 @@ export class AppComponent implements OnInit {
     //     "territory": "SI",
     //     "composer_name": "matijak_test"
     //   },
-    //   'allergies': this.values
+    //   'melanoma_features': this.formConfig.values[0]
     // }))
   }
 
   putComposition() {
     this.basicService.putComposition(JSON.stringify({
+      "ctx/time": "2014-3-19T13:10Z",
       "ctx/language": "en",
       "ctx/territory": "CA",
-      'allergies': this.values
+      [Object.keys(this.formConfig.values)[0]]: this.formConfig.values[Object.keys(this.formConfig.values)[0]]
     }))
       .subscribe(console.log);
+
+    console.log(this.formConfig.values[Object.keys(this.formConfig.values)[0]], "LOL")
+  }
+  createEhr(){
+    this.basicService.createEhr().subscribe(console.log);
   }
 }

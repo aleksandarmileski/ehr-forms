@@ -20,10 +20,13 @@
     "@angular/platform-browser": "^4.0.0",
     "@angular/platform-browser-dynamic": "^4.0.0",
     "@angular/router": "^4.0.0",
+    "@ng-bootstrap/ng-bootstrap": "*",
+    "bootstrap": "^4.0.0-alpha.6",
     "core-js": "^2.4.1",
-    "thinkehr-forms": "*",
-    "@ng-bootstrap/ng-bootstrap": "^1.0.0-alpha.21",
+    "mrd-theme": "*",
+    "mrd-ui-components": "*",
     "rxjs": "^5.1.0",
+    "thinkehr-forms": "^1.99.53",
     "zone.js": "^0.8.4"
   },
   "devDependencies": {

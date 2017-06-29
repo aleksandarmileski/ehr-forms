@@ -24,19 +24,7 @@ import {ArrhythmiaComponent} from './arrhythmia/arrhythmia.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    BmiSimpleComponent,
-    TempCalculatorComponent,
-    Das28Component,
-    MainDiagnosisComponent,
-    GeneralStatusComponent,
-    AllergiesComponent,
-    SocialAnamesisComponent,
-    AssociatedDiseasesComponent,
-    ProceduresComponent,
-    AlchoholUseComponent,
-    TobaccoUseComponent,
-    ArrhythmiaComponent
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -45,34 +33,11 @@ import {ArrhythmiaComponent} from './arrhythmia/arrhythmia.component';
     NgbModule.forRoot(),
     EhrFormModelModule,
     EhrFormComponentsModule.forRoot({
-      terminologyLoaderService: TerminologyService,
-      customComponentsMap: {
-        'bmiCalc': BmiSimpleComponent,
-        'outputCalc': TempCalculatorComponent,
-        'das': Das28Component,
-        'mainDiag': MainDiagnosisComponent,
-        'alcUse': AlchoholUseComponent,
-        'allergies': AllergiesComponent,
-        'ass-dis': AssociatedDiseasesComponent,
-        'general-status': GeneralStatusComponent,
-        'procedures': ProceduresComponent,
-        'social-ana': SocialAnamesisComponent,
-        'tobacco-use': TobaccoUseComponent,
-        'arrhythmia': ArrhythmiaComponent
-      }
+      terminologyLoaderService: TerminologyService
     })
   ],
   providers: [EhrFormService, TerminologyService, BasicService],
-  entryComponents: [BmiSimpleComponent, TempCalculatorComponent, Das28Component,
-    MainDiagnosisComponent,
-    AlchoholUseComponent,
-    AllergiesComponent,
-    AssociatedDiseasesComponent,
-    GeneralStatusComponent,
-    ProceduresComponent,
-    SocialAnamesisComponent,
-    TobaccoUseComponent,
-    ArrhythmiaComponent],
+  entryComponents: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
