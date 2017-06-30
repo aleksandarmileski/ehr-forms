@@ -34,6 +34,8 @@ export class AppComponent implements OnInit {
 
   @ViewChild('renderer')
   renderer;
+  activeCompUid: String = '';
+  activeTempUid: String = '';
 
   forms: any = [];
 
@@ -91,7 +93,9 @@ export class AppComponent implements OnInit {
     // console.log(version);
     this.basicService.getForm(name, version)
       .subscribe(response => {
-        // console.log(response)
+         console.log(response.form.templateId, "form response")
+         this.activeTempUid = response.form.templateId;
+        console.log(this.activeTempUid, "LOLOL")
         this.basicService.getFormResource(name, version, "form-description")
           .subscribe(desc => {
             for (let i = 0; i < 2; i++) {
@@ -105,12 +109,13 @@ export class AppComponent implements OnInit {
                 // for (let i = 0; i < 28; i++) {
                 //   layout[0]['children'][0]['rows'][0]['cols'][0]['children'].unshift(layout[0]['children'][0]['rows'][0]['cols'][0]['children'][0])
                 // }
-                this.formConfig = {description: desc, layout: layout}
-                setTimeout(() => {
-                }, 200)
+                this.formConfig = {description: desc, layout: layout
+                }
+                    this.getCompositionIdFromTemplate();
 
                 // console.log(this.formConfig)
               });
+
           });
       })
   }
@@ -187,12 +192,9 @@ export class AppComponent implements OnInit {
   }
 
   putComposition() {
-    this.basicService.putComposition(JSON.stringify({
-      "ctx/time": "2014-3-19T13:10Z",
-      "ctx/language": "en",
-      "ctx/territory": "CA",
+    this.basicService.putComposition(this.activeCompUid, this.activeTempUid, {
       [Object.keys(this.formConfig.values)[0]]: this.formConfig.values[Object.keys(this.formConfig.values)[0]]
-    }))
+    })
       .subscribe(console.log);
 
     console.log(this.formConfig.values[Object.keys(this.formConfig.values)[0]], "LOL")
@@ -200,4 +202,16 @@ export class AppComponent implements OnInit {
   createEhr(){
     this.basicService.createEhr().subscribe(console.log);
   }
+  getCompositionIdFromTemplate(){
+    this.basicService.getCompositionIdFromTemplate(JSON.stringify({
+      "aql": "select a/archetype_details/template_id, a/uid/value from EHR e contains COMPOSITION a where a/archetype_details/template_id='Melanoma Features' offset 0 limit 100",
+    }))
+        .subscribe(data => {
+          console.log(data)
+          console.log(data.resultSet[0]['#1'])
+          this.activeCompUid = data.resultSet[0]['#1']
+        })
+
+  }
+
 }

@@ -33,8 +33,9 @@ export class BasicService {
       {headers: this.getHeaders})
   }
 
-  putComposition(body) {
-    return this.http.put(`https://rest.ehrscape.com/rest/v1/composition/4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1&format=STRUCTURED&templateId=Melanoma Features`,
+  putComposition(compositionId, templateId, body) {
+    this.appendContexToBody(body);
+    return this.http.put(`https://rest.ehrscape.com/rest/v1/composition/${compositionId}&format=STRUCTURED&templateId=${templateId}`,
       body,
       {headers: this.getHeaders})
   }
@@ -42,6 +43,16 @@ export class BasicService {
     let body = {};
     return this.http.post('https://rest.ehrscape.com/rest/v1/ehr', body, this.headers)
   }
+  getCompositionIdFromTemplate(body){
+    return this.http.post('https://rest.ehrscape.com/rest/v1/query', body, this.headers)
+        .map(res => res.json())
+  }
+  appendContexToBody(body: Object) {
+    body['ctx'] = {
+      'language': 'en',
+      'territory': 'SI'
+    };
+  };
 
 }
 
@@ -51,4 +62,4 @@ export class BasicService {
 
 
 // NEWEST EHR "{"meta":{"href":"https://rest.ehrscape.com/rest/v1/ehr/1c536511-6b54-4066-a2af-6718f2e9bdfd"},"action":"CREATE","ehrId":"1c536511-6b54-4066-a2af-6718f2e9bdfd"}"
-// NEWSST COMP "{"meta":{"href":"https://rest.ehrscape.com/rest/v1/composition/4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1"},"action":"CREATE","compositionUid":"4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1"}"
+// NEWSST COMP "{"meta":{"href":"https://rest.ehrscape.com/rest/v1/compositio"},"action":"CREATE","compositionUid":"4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1"}"n/4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1
