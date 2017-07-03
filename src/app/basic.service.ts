@@ -8,6 +8,7 @@ export class BasicService {
   private authorization = "Basic " + btoa("melanoma" + ":" + "melanoma");
   private getHeaders: Headers = new Headers({'Authorization': this.authorization, 'Content-Type': 'application/json'});
   private headers = {headers: this.getHeaders};
+  documents = [];
 
   constructor(private http: Http) {
   }
@@ -27,26 +28,30 @@ export class BasicService {
       .map(response => response.json());
   }
 
-  postComposition(body) {
-    return this.http.post('https://rest.ehrscape.com/rest/v1/composition?ehrId=1c536511-6b54-4066-a2af-6718f2e9bdfd&templateId=Melanoma Features&format=STRUCTURED&commiter=Belinda Nurse',
+  postComposition(tName, body) {
+    return this.http.post(`https://rest.ehrscape.com/rest/v1/composition?ehrId=1c536511-6b54-4066-a2af-6718f2e9bdfd&templateId=${tName}&format=STRUCTURED&commiter=Belinda Nurse`,
       body,
       {headers: this.getHeaders})
   }
 
   putComposition(compositionId, templateId, body) {
     this.appendContexToBody(body);
-    return this.http.put(`https://rest.ehrscape.com/rest/v1/composition/${compositionId}&format=STRUCTURED&templateId=${templateId}`,
+    console.log(JSON.stringify(body))
+    return this.http.put("https://rest.ehrscape.com/rest/v1/composition/" + compositionId + "?templateId=" + templateId + "&format=STRUCTURED",
       body,
       {headers: this.getHeaders})
   }
-  createEhr(){
+
+  createEhr() {
     let body = {};
     return this.http.post('https://rest.ehrscape.com/rest/v1/ehr', body, this.headers)
   }
-  getCompositionIdFromTemplate(body){
+
+  getCompositionIdFromTemplate(body) {
     return this.http.post('https://rest.ehrscape.com/rest/v1/query', body, this.headers)
-        .map(res => res.json())
+      .map(res => res.json())
   }
+
   appendContexToBody(body: Object) {
     body['ctx'] = {
       'language': 'en',

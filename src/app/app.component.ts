@@ -47,8 +47,10 @@ export class AppComponent implements OnInit {
   values: any = {};
 
   formConfig: { description: any, layout?: any, values?: any, context?: any };
+  private tName: any = '';
 
   constructor(private basicService: BasicService) {
+    this.getCompositionIdFromTemplate();
 
   }
 
@@ -89,12 +91,13 @@ export class AppComponent implements OnInit {
   }
 
   getForm(name, version) {
-    // console.log(name);
-    // console.log(version);
+    this.tName = name;
+    // console.log("T name: "+name);
+    // console.log("T version "+version);
     this.basicService.getForm(name, version)
       .subscribe(response => {
-         console.log(response.form.templateId, "form response")
-         this.activeTempUid = response.form.templateId;
+        console.log(response.form.templateId, "form response")
+        this.activeTempUid = response.form.templateId;
         console.log(this.activeTempUid, "LOLOL")
         this.basicService.getFormResource(name, version, "form-description")
           .subscribe(desc => {
@@ -105,13 +108,16 @@ export class AppComponent implements OnInit {
             }
             this.basicService.getFormResource(name, version, "form-layout")
               .subscribe(layout => {
-                // console.log(layout[0]['children'][0]['rows'][0]['cols'][0]['children'])
-                // for (let i = 0; i < 28; i++) {
-                //   layout[0]['children'][0]['rows'][0]['cols'][0]['children'].unshift(layout[0]['children'][0]['rows'][0]['cols'][0]['children'][0])
-                // }
-                this.formConfig = {description: desc, layout: layout
-                }
-                    this.getCompositionIdFromTemplate();
+                console.log(desc, "te")
+
+                this.getCompositionIdFromTemplate().subscribe(i => {
+                  let data = i[i.length-1];
+                  console.log(data, "data.")
+                  this.formConfig = {
+                    description: desc, layout: layout, values: data
+
+                  }
+                });
 
                 // console.log(this.formConfig)
               });
@@ -174,7 +180,7 @@ export class AppComponent implements OnInit {
   postComposition() {
     // console.log(this.values.allergies['adverse_reaction_-_allergy.v1'] = this.values.allergies['adverse_reaction_-_allergy']  , 'values');
     console.log(this.values)
-    this.basicService.postComposition({
+    this.basicService.postComposition(this.tName, {
       "ctx/time": "2014-3-19T13:10Z",
       "ctx/language": "en",
       "ctx/territory": "CA",
@@ -192,26 +198,38 @@ export class AppComponent implements OnInit {
   }
 
   putComposition() {
-    this.basicService.putComposition(this.activeCompUid, this.activeTempUid, {
+    this.basicService.putComposition("4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1", this.activeTempUid, {
       [Object.keys(this.formConfig.values)[0]]: this.formConfig.values[Object.keys(this.formConfig.values)[0]]
     })
       .subscribe(console.log);
 
     console.log(this.formConfig.values[Object.keys(this.formConfig.values)[0]], "LOL")
   }
-  createEhr(){
+
+  createEhr() {
     this.basicService.createEhr().subscribe(console.log);
   }
-  getCompositionIdFromTemplate(){
-    this.basicService.getCompositionIdFromTemplate(JSON.stringify({
-      "aql": "select a/archetype_details/template_id, a/uid/value from EHR e contains COMPOSITION a where a/archetype_details/template_id='Melanoma Features' offset 0 limit 100",
+
+//b47417bb-005a-40e8-afd7-8c73915e8dfd::melanoma.ehrscape.com::1
+  getCompositionIdFromTemplate() {
+    return this.basicService.getCompositionIdFromTemplate(JSON.stringify({
+      //"aql": `select a/archetype_details/template_id, a/uid/value from EHR e contains COMPOSITION a where a/archetype_details/template_id=${this.tName} offset 0 limit 100`,
+      "aql": `select a from EHR e contains COMPOSITION a where a/archetype_details/template_id = 'Melanoma Features'`
+
     }))
-        .subscribe(data => {
-          console.log(data)
-          console.log(data.resultSet[0]['#1'])
-          this.activeCompUid = data.resultSet[0]['#1']
-        })
+      .map(data => {
+        return data.resultSet.map(i => i['#0']);
+
+//        console.log(this.basicService.documents, "docs.")
+        // console.log(data)
+        // console.log(data.resultSet[0]['#1'])
+        // this.activeCompUid = data.resultSet[0]['#1']
+        // console.log("ACU " + this.activeCompUid);
+      })
 
   }
 
+  openDocumentEdit(document) {
+    //this.form
+  }
 }
