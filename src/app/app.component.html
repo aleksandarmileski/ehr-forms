@@ -1,8 +1,13 @@
 <div style="margin: 5px; display: inline" *ngFor="let f of forms;let i=index;">
     <button class="btn btn-primary btn-sm"
-            (click)="getForm(f['name'],f['version'])">{{f.name}} {{f.version}}
+            (click)="getFormBlank(f.name)">{{f.name}}
     </button>
 </div>
+<!--<div style="margin: 5px; display: inline" *ngFor="let f of forms;let i=index;">-->
+    <!--<button class="btn btn-primary btn-sm"-->
+            <!--(click)="getForm(f['name'],f['version'])">{{f.name}} {{f.version}}-->
+    <!--</button>-->
+<!--</div>-->
 <!--<button (click)="getRenderer()">x</button>-->
 <!--<div class="container wrapper" style="margin-top: 30px; text-align: center">-->
     <!--<div class="col-md-12">-->
@@ -16,9 +21,20 @@
     <!--</div>-->
 <!--</div>-->
 
-    <ehr-form-description-renderer [formConfig]="formConfig"
-                                   #renderer>
-    </ehr-form-description-renderer>
+<!--<ehr-form-description-renderer #renderer [formConfig]="{description: formConfigX.description, layout: formConfigX.layout, values: formConfigX.values}"></ehr-form-description-renderer>-->
+
+
+<ehr-form-description-renderer #renderer [formConfig]="formConfigX"></ehr-form-description-renderer>
+
+
+
+<!--<ehr-form-description-renderer #renderer [formConfig]="{description: formRes['description'], layout: formRes['layout'], values: values}" (onValidationChange)="onValidationEvent($event)"></ehr-form-description-renderer>
+-->
+
+
+
+
+
 <button class="btn btn-primary" (click)="putComposition()">
     PUT dat
 </button>
@@ -31,6 +47,15 @@ Create Dat
 <button class="btn btn-primary" (click)="getCompositionIdFromTemplate()">
     Get Composition Uid by Template
 </button>
+<button class="btn btn-primary" (click)="getAllCompositionsByTempId()">
+        Get All Compoisitons
+</button>
+<button class="btn btn-primary" *ngFor="let button of compUid" (click)="renderByCompUid(button)">
+        {{button}}
+</button>
+<button class="btn btn-primary"  (click)="getComposition()">
+        GET VALUES
+</button>
 <!--<div *ngIf="formDescription">-->
 
     <!--<button (click)="postComposition()">Post</button>-->
@@ -40,6 +65,6 @@ Create Dat
 
 
 
-<button *ngFor="let document of documents" (click)="openDocumentEdit(document)">
+<button *ngFor="let document of documents" (click)="openDocumentEdit(document)" #activatedCompUid>
   Open
 </button>

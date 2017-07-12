@@ -1,10 +1,14 @@
 import {Injectable} from '@angular/core';
-import {Http, Headers} from "@angular/http";
+import {Http, Headers, RequestOptions, URLSearchParams} from "@angular/http";
+import {Observable} from 'rxjs';
+
 
 @Injectable()
 export class BasicService {
 
   private baseFormUrl = 'https://rest.ehrscape.com/rest/v1/form';
+  private taggingFormUrl = 'https://rest.ehrscape.com/rest/v1/tagging/';
+
   private authorization = "Basic " + btoa("melanoma" + ":" + "melanoma");
   private getHeaders: Headers = new Headers({'Authorization': this.authorization, 'Content-Type': 'application/json'});
   private headers = {headers: this.getHeaders};
@@ -58,6 +62,23 @@ export class BasicService {
       'territory': 'SI'
     };
   };
+
+  getAllCompositionsByTempId(aql){
+      return this.http.get('https://rest.ehrscape.com/rest/v1/query/?aql=' + aql, this.headers)
+          .map(res => res.json())
+  }
+
+  getComposition(uid): Observable<any> {
+    let params = new URLSearchParams();
+    params.set('format', 'STRUCTURED');
+    let options = new RequestOptions({search: params, headers: this.getHeaders});
+    return this.http.get(`https://rest.ehrscape.com/rest/v1/composition/${uid}`, options)
+        .map(data => data.json());
+  }
+  getCompositionTagByUid(uid){
+      return this.http.get(this.taggingFormUrl+uid, this.headers)
+          .map(res=>res.json())
+  }
 
 }
 

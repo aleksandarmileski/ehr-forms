@@ -1,235 +1,113 @@
-import {Component, OnChanges, OnInit, ViewChild} from '@angular/core';
+import {Component, OnChanges, OnInit, ViewChild, ChangeDetectorRef, NgZone} from '@angular/core';
 import {forma} from "./form"
 import {BasicService} from "./basic.service";
 import {validate} from "codelyzer/walkerFactory/walkerFn";
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css']
+    selector: 'app-root',
+    templateUrl: './app.component.html',
+    styleUrls: ['./app.component.css']
 })
 export class AppComponent implements OnInit {
-  tabs: any = [{
-    tag: 'tab1',
-    name: 'Main diagnosis'
-  },
-    {
-      tag: 'tab2',
-      name: 'General status'
-    },
-    {
-      tag: 'tab3',
-      name: 'Social Amnesis'
-    },
-    {
-      tag: 'tab4',
-      name: 'Associated diseases'
-    },
-    {
-      tag: 'tab5',
-      name: 'Procedures'
-    }];
-  selectedTab = this.tabs[0];
-  form = forma;
+    form = forma;
+    @ViewChild('renderer')
+    renderer;
+    activeTempUid: String = '';
+    activeCompUid: String = '';
+    forms: any = [];
+    vH: any;
+    formDescription: any = '';
+    values: any = {};
+    shouldRender = false;
+    @ViewChild('activatedCompUid') activatedCompUid;
+    formConfigX: { description: any, layout?: any, values?: any, context?: any };
+    private tName: any = '';
+    private compUid;
+    private compositionHasTags = false;
+    private activeCompositionTags;
 
-  @ViewChild('renderer')
-  renderer;
-  activeCompUid: String = '';
-  activeTempUid: String = '';
-
-  forms: any = [];
-
-  vH: any;
-
-  formDescription: any = '';
-  formLayout: any = '';
-  newFormConfig;
-  values: any = {};
-
-  formConfig: { description: any, layout?: any, values?: any, context?: any };
-  private tName: any = '';
-
-  constructor(private basicService: BasicService) {
-    this.getCompositionIdFromTemplate();
-
-  }
-
-  setActiveTab(tab) {
-    if (this.selectedTab) {
-      this.toggleTag(this.selectedTab, false)
+    constructor(private basicService: BasicService) {
     }
-    this.toggleTag(tab, true);
-    this.selectedTab = tab;
-  }
-
-  toggleTag(tab, shown) {
-    // console.log(tab, "?!?!?!?!")
-    tab.model.viewConfig.setHidden(!shown);
-  }
-
-  getRenderer() {
-    // console.log(this.renderer, "hehehe")
-    this.initialize();
-  }
-
-  ngOnInit() {
-    this.basicService.getForms()
-      .subscribe(response => {
-        // this.forms = response['forms'];
-
-        this.vH = response['forms'][0].name;
-        this.forms.push(response['forms'][0]);
-        response['forms'].forEach(form => {
-          // console.log("Form name: " + form.name + " vHname=" + this.vH)
-          if (form.name != this.vH) {
-            this.vH = form.name;
-            this.forms.push(form);
-            // console.log("New form, name: " + this.vH)
-          }
+    ngOnInit() {
+        this.basicService.getForms()
+            .subscribe(response => {
+                this.vH = response['forms'][0].name;
+                this.forms.push(response['forms'][0]);
+                response['forms'].forEach(form => {
+                    if (form.name != this.vH) {
+                        this.vH = form.name;
+                        this.forms.push(form);
+                    }
+                })
+            });
+    }
+    getFormBlank(name) {
+        this.activeTempUid = name;
+        console.log(this.activeTempUid, 'tempid')
+    }
+    getForm(name, version, compositionData) {
+        this.tName = name;
+        this.basicService.getForm(name, version)
+            .subscribe(response => {
+                this.activeTempUid = response.form.templateId;
+                this.basicService.getFormResource(name, version, "form-description")
+                    .subscribe(desc => {
+                        this.basicService.getFormResource(name, version, "form-layout")
+                            .subscribe(layout => {
+                                    this.formConfigX = {
+                                        description: desc, layout: layout, values: compositionData
+                                    };
+                            });
+                    });
+            })
+    }
+    postComposition() {
+        console.log(this.values)
+        this.basicService.postComposition(this.tName, {
+            "ctx/time": "2014-3-19T13:10Z",
+            "ctx/language": "en",
+            "ctx/territory": "CA",
+            [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
         })
-      });
-  }
-
-  getForm(name, version) {
-    this.tName = name;
-    // console.log("T name: "+name);
-    // console.log("T version "+version);
-    this.basicService.getForm(name, version)
-      .subscribe(response => {
-        console.log(response.form.templateId, "form response")
-        this.activeTempUid = response.form.templateId;
-        console.log(this.activeTempUid, "LOLOL")
-        this.basicService.getFormResource(name, version, "form-description")
-          .subscribe(desc => {
-            for (let i = 0; i < 2; i++) {
-              let newOne = desc['children'][0]['children'][0];
-              newOne.formId = newOne.formId + ':' + i;
-              desc['children'][0]['children'].unshift(newOne);
-            }
-            this.basicService.getFormResource(name, version, "form-layout")
-              .subscribe(layout => {
-                console.log(desc, "te")
-
-                this.getCompositionIdFromTemplate().subscribe(i => {
-                  let data = i[i.length-1];
-                  console.log(data, "data.")
-                  this.formConfig = {
-                    description: desc, layout: layout, values: data
-
-                  }
-                });
-
-                // console.log(this.formConfig)
-              });
-
-          });
-      })
-  }
-
-  mypath: string;
-
-  findMe(path?: string): any {
-    this.getChildByPath(this.renderer.formRootModel.childModels, path);
-  }
-
-  initialize() {
-
-    this.tabs.forEach((tab, index) => {
-      // console.log(tab.tag, "???")
-      let model = this.renderer.formRootModel.findModelWithTag(tab.tag);
-      if (tab.tag != this.selectedTab.tag) {
-        model.viewConfig.setHidden(true)
-      }
-      this.tabs[index].model = model;
-    })
-
-  }
-
-  changeMe(path: string) {
-    let node = this.findMe(path);
-    // console.log(node, "xxxxxxxxxxx")
-    // node.value[0]['|magnitude'] = 232;
-    // console.log(node, "LOL")
-  }
-
-  hideMe(path) {
-  }
-
-  //this.renderer.formRootModel.childModels
-  getChildByPath(childModels: any[], path = 'kolbas') {
-    let node = this.findNodeByPath(childModels, path);
-    if (!node) {
-      return childModels.forEach(model => this.getChildByPath(model.childModels, path))
-    } else {
-      node.viewConfig.setHidden(true)
-      // console.log("I FOUND THE GUY", node);
-      //  node.value[0]['|magnitude'] = 232;
-      // console.log("I FOUND THE GUY", node);
-
-      return node;
+            .subscribe(console.log);
     }
-  }
+    putComposition() {
+        this.basicService.putComposition(this.activeCompUid, this.activeTempUid, {
+            [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
+        })
+            .subscribe(console.log);
+        console.log(this.formConfigX.values[Object.keys(this.formConfigX.values)[0]], "LOL")
+    }
+    createEhr() {
+        this.basicService.createEhr().subscribe(console.log);
+    }
+    getAllCompositionsByTempId() {
+        let realAql = `select a/archetype_details/template_id, a from EHR e contains COMPOSITION a WHERE a/archetype_details/template_id = '${this.activeTempUid}' offset 0 limit 100`
+        this.basicService.getAllCompositionsByTempId(realAql)
+            .map(data => {
+                return data.resultSet.map(uid => uid['#1'].uid.value)
+            })
+            .subscribe(data => this.compUid = data)
+    }
+    renderByCompUid(uid) {
+        this.basicService.getCompositionTagByUid(uid)
+            .subscribe(response => {
+                response == null
+                    ? this.compositionHasTags = false
+                    : this.setActiveTags(response.tags, uid);
+                console.log(this.compositionHasTags)
+                this.activeCompUid = uid;
+            })
+    }
 
-  findNodeByPath(children, path) {
-    return children.find(i => {
-        if (path == 'kolbas') console.log(i.aqlPath);
-        return i.aqlPath == path
-      }) || null;
-  }
-
-  postComposition() {
-    // console.log(this.values.allergies['adverse_reaction_-_allergy.v1'] = this.values.allergies['adverse_reaction_-_allergy']  , 'values');
-    console.log(this.values)
-    this.basicService.postComposition(this.tName, {
-      "ctx/time": "2014-3-19T13:10Z",
-      "ctx/language": "en",
-      "ctx/territory": "CA",
-      [Object.keys(this.formConfig.values)[0]]: this.formConfig.values
-    })
-      .subscribe(console.log);
-    // console.log(JSON.stringify({
-    //   "ctx": {
-    //     "language": "en",
-    //     "territory": "SI",
-    //     "composer_name": "matijak_test"
-    //   },
-    //   'melanoma_features': this.formConfig.values[0]
-    // }))
-  }
-
-  putComposition() {
-    this.basicService.putComposition("4c6b86c3-3ae6-4687-bda4-0d6187283144::melanoma.ehrscape.com::1", this.activeTempUid, {
-      [Object.keys(this.formConfig.values)[0]]: this.formConfig.values[Object.keys(this.formConfig.values)[0]]
-    })
-      .subscribe(console.log);
-
-    console.log(this.formConfig.values[Object.keys(this.formConfig.values)[0]], "LOL")
-  }
-
-  createEhr() {
-    this.basicService.createEhr().subscribe(console.log);
-  }
-
-//b47417bb-005a-40e8-afd7-8c73915e8dfd::melanoma.ehrscape.com::1
-  getCompositionIdFromTemplate() {
-    return this.basicService.getCompositionIdFromTemplate(JSON.stringify({
-      //"aql": `select a/archetype_details/template_id, a/uid/value from EHR e contains COMPOSITION a where a/archetype_details/template_id=${this.tName} offset 0 limit 100`,
-      "aql": `select a from EHR e contains COMPOSITION a where a/archetype_details/template_id = 'Melanoma Features'`
-
-    }))
-      .map(data => {
-        return data.resultSet.map(i => i['#0']);
-
-//        console.log(this.basicService.documents, "docs.")
-        // console.log(data)
-        // console.log(data.resultSet[0]['#1'])
-        // this.activeCompUid = data.resultSet[0]['#1']
-        // console.log("ACU " + this.activeCompUid);
-      })
-
-  }
-
-  openDocumentEdit(document) {
-    //this.form
-  }
+    setActiveTags(tags, uid) {
+        this.compositionHasTags = true;
+        this.activeCompositionTags = {'version': tags["0"].tag, 'template': tags["1"].tag};
+        console.log(this.activeCompositionTags)
+        this.shouldRender = true;
+        this.basicService.getComposition(uid)
+            .subscribe(response => {
+                this.getForm(this.activeCompositionTags.template, this.activeCompositionTags.version, response.composition);
+            })
+    }
 }
