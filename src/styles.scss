@@ -1,9 +1,10 @@
 /* You can add global styles to this file, and also import other style files */
+@import "~mrd-theme/bootstrap/scss/bootstrap.scss";
 @import "~thinkehr-forms/src/_ehr-form-base-styles.scss";
 
-ehr-form {
-@import "~thinkehr-forms/src/theme/all-gray.scss";
-}
+/*ehr-form {*/
+/*@import "~thinkehr-forms/src/theme/all-gray.scss";*/
+/*}*/
 
 .no-border {
     border: 0 !important;
