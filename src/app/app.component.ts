@@ -46,6 +46,8 @@ export class AppComponent implements OnInit {
     getFormBlank(name) {
         this.activeTempUid = name;
         console.log(this.activeTempUid, 'tempid')
+        this.getAllCompositionsByTempId();
+
     }
     getForm(name, version, compositionData) {
         this.isFormActive = true;
@@ -90,28 +92,56 @@ export class AppComponent implements OnInit {
             .map(data => {
                 return data.resultSet.map(uid => uid['#1'].uid.value)
             })
-            .subscribe(data => this.compUid = data)
+            .subscribe(data => {
+              this.compUid = data;
+              this.renderByCompUid(this.compUid[0])
+            })
     }
     renderByCompUid(uid) {
         this.basicService.getCompositionTagByUid(uid)
             .subscribe(response => {
-                response == null
-                    ? this.compositionHasTags = false
-                    : this.setActiveTags(response.tags, uid);
-                console.log(this.compositionHasTags)
-                this.activeCompUid = uid;
+              console.log(this.compositionHasTags)
+              this.activeCompUid = uid;
+
+              if(response !== null){
+                this.setActiveTags(response.tags, uid);
+                this.compositionHasTags = true;
+              }else{
+                this.setActiveTags(null, uid);
+                this.compositionHasTags = false;
+              }
             })
     }
 
     setActiveTags(tags, uid) {
+      if(tags!=null){
         this.compositionHasTags = true;
         this.activeCompositionTags = {'version': tags["0"].tag, 'template': tags["1"].tag};
-        console.log(this.activeCompositionTags)
         this.shouldRender = true;
-        this.basicService.getComposition(uid)
-            .subscribe(response => {
-                this.getForm(this.activeCompositionTags.template, this.activeCompositionTags.version, response.composition);
-            })
+      }else {
+        let initialVersion = this.getLatestTempIdVersion(this.activeTempUid)
+        this.activeCompositionTags = {'version': initialVersion, 'template': this.activeTempUid};
+      }
+
+      this.getCompositionByUid(uid);
+    }
+
+    getLatestTempIdVersion(tempID){
+      let latestVersion = null;
+      this.forms.forEach(form =>{
+        if(form.name == tempID){
+          latestVersion = form.version;
+        }
+      });
+      return latestVersion;
+    }
+
+    getCompositionByUid(uid){
+      // console.log(this.activeCompositionTags)
+      this.basicService.getComposition(uid)
+        .subscribe(response => {
+          this.getForm(this.activeCompositionTags.template, this.activeCompositionTags.version, response.composition);
+        })
     }
     toggleDropDown(){
         this.isToggled = !this.isToggled;

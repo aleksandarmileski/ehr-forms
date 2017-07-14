@@ -21,5 +21,7 @@
 
     <ehr-form-description-renderer #renderer [formConfig]="formConfigX"
                                    *ngIf="isFormActive"></ehr-form-description-renderer>
+    <button *ngIf="compositionHasTags && compositionHasTags!=null" (click)="postComposition()"> Save</button>
+    <button *ngIf="!compositionHasTags && compositionHasTags!=null" (click)="putComposition()"> Edit</button>
 
 </div>
