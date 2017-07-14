@@ -4,9 +4,9 @@ import {FormsModule} from '@angular/forms';
 import {HttpModule} from '@angular/http';
 import {EhrFormComponentsModule, EhrFormModelModule, EhrFormService, TerminologyService} from 'thinkehr-forms';
 // import EhrFormCustomComponentsModule for custom components
-import {AppComponent} from './app.component';
+import {AppComponent} from '../app/Components/app.component';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
-import {BasicService} from "./basic.service";
+import {BasicService} from "../app/services/basic.service";
 // import {AuthService} from './auth.service';
 @NgModule({
   declarations: [

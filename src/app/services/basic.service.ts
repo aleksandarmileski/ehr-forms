@@ -46,16 +46,6 @@ export class BasicService {
       {headers: this.getHeaders})
   }
 
-  createEhr() {
-    let body = {};
-    return this.http.post(this.apiServerUrl + '/ehr', body, this.headers)
-  }
-
-  getCompositionIdFromTemplate(body) {
-    return this.http.post(this.apiServerUrl + '/query', body, this.headers)
-      .map(res => res.json())
-  }
-
   appendContexToBody(body: Object) {
     body['ctx'] = {
       'language': 'en',

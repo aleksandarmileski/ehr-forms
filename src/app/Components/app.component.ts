@@ -1,22 +1,19 @@
-import {Component, OnChanges, OnInit, ViewChild, ChangeDetectorRef, NgZone} from '@angular/core';
-import {forma} from "./form"
-import {BasicService} from "./basic.service";
+import {Component, OnInit, ViewChild} from '@angular/core';
+import {BasicService} from "../services/basic.service";
 import {validate} from "codelyzer/walkerFactory/walkerFn";
 
 @Component({
     selector: 'app-root',
-    templateUrl: './app.component.html',
-    styleUrls: ['./app.component.css']
+    templateUrl: '../views/app.component.html',
+    styleUrls: ['../app.component.scss']
 })
 export class AppComponent implements OnInit {
-    form = forma;
     @ViewChild('renderer')
     renderer;
     activeTempUid: String = '';
     activeCompUid: String = '';
     forms: any = [];
     vH: any;
-    formDescription: any = '';
     values: any = {};
     shouldRender = false;
     @ViewChild('activatedCompUid') activatedCompUid;
@@ -64,15 +61,15 @@ export class AppComponent implements OnInit {
                     });
             })
     }
-    postComposition() {
-        this.basicService.postComposition(this.tName, {
-            "ctx/time": "2014-3-19T13:10Z",
-            "ctx/language": "en",
-            "ctx/territory": "CA",
-            [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
-        })
-            .subscribe();
-    }
+    //postComposition() {
+    //    this.basicService.postComposition(this.tName, {
+    //        "ctx/time": "2014-3-19T13:10Z",
+    //        "ctx/language": "en",
+    //        "ctx/territory": "CA",
+    //        [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
+    //    })
+    //        .subscribe();
+    //}
     putComposition() {
         this.basicService.putComposition(this.activeCompUid, this.activeTempUid, {
             [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
@@ -130,7 +127,6 @@ export class AppComponent implements OnInit {
     }
 
     getCompositionByUid(uid){
-      // console.log(this.activeCompositionTags)
       this.basicService.getComposition(uid)
         .subscribe(response => {
           this.getForm(this.activeCompositionTags.template, this.activeCompositionTags.version, response.composition);
