@@ -45,9 +45,7 @@ export class AppComponent implements OnInit {
     }
     getFormBlank(name) {
         this.activeTempUid = name;
-        console.log(this.activeTempUid, 'tempid')
         this.getAllCompositionsByTempId();
-
     }
     getForm(name, version, compositionData) {
         this.isFormActive = true;
@@ -67,25 +65,21 @@ export class AppComponent implements OnInit {
             })
     }
     postComposition() {
-        console.log(this.values)
         this.basicService.postComposition(this.tName, {
             "ctx/time": "2014-3-19T13:10Z",
             "ctx/language": "en",
             "ctx/territory": "CA",
             [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
         })
-            .subscribe(console.log);
+            .subscribe();
     }
     putComposition() {
         this.basicService.putComposition(this.activeCompUid, this.activeTempUid, {
             [Object.keys(this.formConfigX.values)[0]]: this.formConfigX.values[Object.keys(this.formConfigX.values)[0]]
         })
-            .subscribe(console.log);
-        console.log(this.formConfigX.values[Object.keys(this.formConfigX.values)[0]], "LOL")
+            .subscribe();
     }
-    createEhr() {
-        this.basicService.createEhr().subscribe(console.log);
-    }
+
     getAllCompositionsByTempId() {
         let realAql = `select a/archetype_details/template_id, a from EHR e contains COMPOSITION a WHERE a/archetype_details/template_id = '${this.activeTempUid}' offset 0 limit 100`
         this.basicService.getAllCompositionsByTempId(realAql)
@@ -100,7 +94,6 @@ export class AppComponent implements OnInit {
     renderByCompUid(uid) {
         this.basicService.getCompositionTagByUid(uid)
             .subscribe(response => {
-              console.log(this.compositionHasTags)
               this.activeCompUid = uid;
 
               if(response !== null){
