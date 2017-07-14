@@ -25,6 +25,8 @@ export class AppComponent implements OnInit {
     private compUid;
     private compositionHasTags = false;
     private activeCompositionTags;
+    private isFormActive: boolean;
+    private isToggled: boolean;
 
     constructor(private basicService: BasicService) {
     }
@@ -46,6 +48,7 @@ export class AppComponent implements OnInit {
         console.log(this.activeTempUid, 'tempid')
     }
     getForm(name, version, compositionData) {
+        this.isFormActive = true;
         this.tName = name;
         this.basicService.getForm(name, version)
             .subscribe(response => {
@@ -109,5 +112,8 @@ export class AppComponent implements OnInit {
             .subscribe(response => {
                 this.getForm(this.activeCompositionTags.template, this.activeCompositionTags.version, response.composition);
             })
+    }
+    toggleDropDown(){
+        this.isToggled = !this.isToggled;
     }
 }

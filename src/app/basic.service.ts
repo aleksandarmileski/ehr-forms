@@ -8,11 +8,11 @@ export class BasicService {
 
   private baseFormUrl = 'https://rest.ehrscape.com/rest/v1/form';
   private taggingFormUrl = 'https://rest.ehrscape.com/rest/v1/tagging/';
+  private apiServerUrl = 'https://rest.ehrscape.com/rest/v1';
 
   private authorization = "Basic " + btoa("melanoma" + ":" + "melanoma");
   private getHeaders: Headers = new Headers({'Authorization': this.authorization, 'Content-Type': 'application/json'});
   private headers = {headers: this.getHeaders};
-  documents = [];
 
   constructor(private http: Http) {
   }
@@ -33,7 +33,7 @@ export class BasicService {
   }
 
   postComposition(tName, body) {
-    return this.http.post(`https://rest.ehrscape.com/rest/v1/composition?ehrId=1c536511-6b54-4066-a2af-6718f2e9bdfd&templateId=${tName}&format=STRUCTURED&commiter=Belinda Nurse`,
+    return this.http.post(this.apiServerUrl + `/composition?ehrId=1c536511-6b54-4066-a2af-6718f2e9bdfd&templateId=${tName}&format=STRUCTURED&commiter=Belinda Nurse`,
       body,
       {headers: this.getHeaders})
   }
@@ -41,18 +41,18 @@ export class BasicService {
   putComposition(compositionId, templateId, body) {
     this.appendContexToBody(body);
     console.log(JSON.stringify(body))
-    return this.http.put("https://rest.ehrscape.com/rest/v1/composition/" + compositionId + "?templateId=" + templateId + "&format=STRUCTURED",
+    return this.http.put(this.apiServerUrl + "/composition/" + compositionId + "?templateId=" + templateId + "&format=STRUCTURED",
       body,
       {headers: this.getHeaders})
   }
 
   createEhr() {
     let body = {};
-    return this.http.post('https://rest.ehrscape.com/rest/v1/ehr', body, this.headers)
+    return this.http.post(this.apiServerUrl + '/ehr', body, this.headers)
   }
 
   getCompositionIdFromTemplate(body) {
-    return this.http.post('https://rest.ehrscape.com/rest/v1/query', body, this.headers)
+    return this.http.post(this.apiServerUrl + '/query', body, this.headers)
       .map(res => res.json())
   }
 
@@ -64,7 +64,7 @@ export class BasicService {
   };
 
   getAllCompositionsByTempId(aql){
-      return this.http.get('https://rest.ehrscape.com/rest/v1/query/?aql=' + aql, this.headers)
+      return this.http.get(this.apiServerUrl + '/query/?aql=' + aql, this.headers)
           .map(res => res.json())
   }
 
@@ -72,7 +72,7 @@ export class BasicService {
     let params = new URLSearchParams();
     params.set('format', 'STRUCTURED');
     let options = new RequestOptions({search: params, headers: this.getHeaders});
-    return this.http.get(`https://rest.ehrscape.com/rest/v1/composition/${uid}`, options)
+    return this.http.get(this.apiServerUrl + `/composition/${uid}`, options)
         .map(data => data.json());
   }
   getCompositionTagByUid(uid){

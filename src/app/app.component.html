@@ -1,70 +1,25 @@
-<div style="margin: 5px; display: inline" *ngFor="let f of forms;let i=index;">
-    <button class="btn btn-primary btn-sm"
-            (click)="getFormBlank(f.name)">{{f.name}}
-    </button>
+<div class="container">
+
+    <div class="col-md-6 offset-md-3 text-center">
+        <div *ngIf="!isFormActive">
+            <p>Please select a form</p>
+        </div>
+        <div class="dropdown">
+            <button class="btn btn-secondary dropdown-toggle" type="button" (click)="toggleDropDown()">
+                Select a form
+            </button>
+            <div *ngIf="isToggled" class="dropdown-forms-menu">
+                <div *ngFor="let f of forms;let i=index;">
+                    <a class="dropdown-item" href="#" (click)="getFormBlank(f.name)">
+                        {{f.name}}
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <ehr-form-description-renderer #renderer [formConfig]="formConfigX"
+                                   *ngIf="isFormActive"></ehr-form-description-renderer>
+
 </div>
-<!--<div style="margin: 5px; display: inline" *ngFor="let f of forms;let i=index;">-->
-    <!--<button class="btn btn-primary btn-sm"-->
-            <!--(click)="getForm(f['name'],f['version'])">{{f.name}} {{f.version}}-->
-    <!--</button>-->
-<!--</div>-->
-<!--<button (click)="getRenderer()">x</button>-->
-<!--<div class="container wrapper" style="margin-top: 30px; text-align: center">-->
-    <!--<div class="col-md-12">-->
-        <!--<div class="btn-group">-->
-            <!--<button class="btn btn-default" [class.btn-primary]="tab.tag == selectedTab.tag" *ngFor="let tab of tabs"-->
-                    <!--(click)="setActiveTab(tab)">-->
-                <!--{{tab.name}}-->
-            <!--</button>-->
-        <!--</div>-->
-
-    <!--</div>-->
-<!--</div>-->
-
-<!--<ehr-form-description-renderer #renderer [formConfig]="{description: formConfigX.description, layout: formConfigX.layout, values: formConfigX.values}"></ehr-form-description-renderer>-->
-
-
-<ehr-form-description-renderer #renderer [formConfig]="formConfigX"></ehr-form-description-renderer>
-
-
-
-<!--<ehr-form-description-renderer #renderer [formConfig]="{description: formRes['description'], layout: formRes['layout'], values: values}" (onValidationChange)="onValidationEvent($event)"></ehr-form-description-renderer>
--->
-
-
-
-
-
-<button class="btn btn-primary" (click)="putComposition()">
-    PUT dat
-</button>
-<button class="btn btn-primary" (click)="createEhr()">
-Create Dat
-</button>
-<button class="btn btn-primary" (click)="postComposition()">
-    POST dat
-</button>
-<button class="btn btn-primary" (click)="getCompositionIdFromTemplate()">
-    Get Composition Uid by Template
-</button>
-<button class="btn btn-primary" (click)="getAllCompositionsByTempId()">
-        Get All Compoisitons
-</button>
-<button class="btn btn-primary" *ngFor="let button of compUid" (click)="renderByCompUid(button)">
-        {{button}}
-</button>
-<button class="btn btn-primary"  (click)="getComposition()">
-        GET VALUES
-</button>
-<!--<div *ngIf="formDescription">-->
-
-    <!--<button (click)="postComposition()">Post</button>-->
-    <!--<button (click)="putComposition()">Put</button>-->
-<!--</div>-->
-
-
-
-
-<button *ngFor="let document of documents" (click)="openDocumentEdit(document)" #activatedCompUid>
-  Open
-</button>
